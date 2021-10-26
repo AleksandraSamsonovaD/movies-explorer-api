@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const isEmail = require('validator/lib/isEmail');
+const auth = require('../middlewares/auth');
 const IncorrectDataError = require('../errors/incorrect-data-err');
 const {
   getUserMe, updateUser,
@@ -13,9 +14,9 @@ const validateEmail = (value) => {
   return value;
 };
 
-router.get('/me', getUserMe);
+router.get('/api/users/me', auth, getUserMe);
 
-router.patch('/me', celebrate({
+router.patch('/api/users/me', auth, celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     email: Joi.string().required().custom(validateEmail),

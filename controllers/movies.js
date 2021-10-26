@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 const Movie = require('../models/movie');
 
 const IncorrectDataError = require('../errors/incorrect-data-err');
@@ -36,8 +35,8 @@ const createMovie = (req, res, next) => {
     .find({
       owner: req.user.id,
       movieId,
-    }).then((movie) => {
-      if (movie.length < 1) {
+    }).then((movies) => {
+      if (movies.length < 1) {
         Movie.create({
           country,
           director,
@@ -69,26 +68,18 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  Movie.find({
-    owner: req.user.id,
-    movieId: req.params.movieId,
-  })
+  Movie.findById(req.params.id)
     .then((movie) => {
-      if (movie.length < 1) {
+      if (!movie) {
         throw new NotFoundError('Фильм не найден');
-      } else if (req.user.id !== movie[0].owner.toString()) {
-        throw new DeleteError('Фильм создана не вами');
+      } else if (req.user.id !== movie.owner.toString()) {
+        throw new DeleteError('Фильм нельзя удалить');
       } else {
-        Movie.findOneAndRemove(
-          {
-            owner: req.user.id,
-            movieId: req.params.movieId,
-          },
-
-        )
-          .then((movie) => {
-            res.send({ data: movie });
-          });
+        movie.remove()
+          .then((movieDelete) => {
+            res.send({ data: movieDelete });
+          })
+          .catch((err) => next(err));
       }
     })
     .catch((err) => next(err));

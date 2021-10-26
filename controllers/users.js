@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -27,7 +26,7 @@ const updateUser = (req, res, next) => {
   User.findByIdAndUpdate(req.user.id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователи не найдены');
+        throw new NotFoundError('Пользователm не найдены');
       } else {
         res.send({ data: user });
       }
@@ -47,27 +46,33 @@ const createUser = (req, res, next) => {
   const {
     email, password, name,
   } = req.body;
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new EmailExistsError('Пользователь с данной почтой уже существует');
-      } else {
-        bcrypt.hash(password, 10)
-          .then((hash) => User.create({
-            email,
-            password: hash,
-            name,
-          }))
-          .then((user) => res.send({
-            data: {
-              name: user.name,
-              email: user.email,
-            },
-          }))
-          .catch(next);
-      }
-    })
+  // User.findOne({ email })
+  // .then((user) => {
+  // if (user) {
+  //  throw new EmailExistsError('Пользователь с данной почтой уже существует');
+  // } else {
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name,
+    }))
+    .then((userNew) => res.send({
+      data: {
+        name: userNew.name,
+        email: userNew.email,
+      },
+    }))
     .catch((err) => {
+      if (err.code === 11000) {
+        throw new EmailExistsError('Пользователь с данной почтой уже существует');
+      }
+      next(err);
+    })
+    .catch(next);
+  // }
+  // })
+  /* .catch((err) => {
       if (err.name === 'ValidationError') {
         const errValid = new IncorrectDataError(err.message);
         next(errValid);
@@ -75,7 +80,7 @@ const createUser = (req, res, next) => {
         const errDef = new DefaultError(err.message);
         next(errDef);
       }
-    });
+    }); */
 };
 
 const login = (req, res, next) => {
