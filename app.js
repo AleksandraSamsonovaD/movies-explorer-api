@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
@@ -10,6 +11,15 @@ const { errorHandler } = require('./errors/error-handler');
 
 const { PORT = 3000, BDNAME = 'bitfilmsdb' } = process.env;
 const app = express();
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  methods: 'POST,GET,PATCH,DELETE',
+  allowedHeaders: 'origin, content-type, accept',
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
