@@ -9,7 +9,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { limiter } = require('./middlewares/limiter');
 const { errorHandler } = require('./errors/error-handler');
 
-const { PORT = 3001, BDNAME = 'bitfilmsdb' } = process.env;
+const { PORT = 3000, BDNAME = 'bitfilmsdb' } = process.env;
 const app = express();
 
 const corsOptions = {
