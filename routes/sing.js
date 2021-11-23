@@ -16,6 +16,11 @@ router.post('/api/signup', celebrate({
   }),
 }), createUser);
 router.post('/api/signout', (req, res) => {
+  res.send({
+    data: {
+      message: 'ВЫХОД',
+    },
+  });
   res.clearCookie('jwt')
     .end();
 });

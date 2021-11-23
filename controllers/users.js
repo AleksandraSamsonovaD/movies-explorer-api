@@ -88,6 +88,12 @@ const login = (req, res, next) => {
   if (!email || !password) { throw new IncorrectAuthError('Нет пароля или почты'); }
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      res.send({
+        data: {
+          name: user.name,
+          email: user.email,
+        },
+      });
       res
         .cookie('jwt', jwt.sign(
           { id: user._id },
