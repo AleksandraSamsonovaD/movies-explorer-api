@@ -19,16 +19,16 @@ router.get('/api/movies/', auth, getMovies);
 
 router.post('/api/movies/', auth, celebrate({
   body: Joi.object().keys({
-    country: Joi.string().required(),
-    director: Joi.string().required(),
+    country: Joi.string(),
+    director: Joi.string(),
     duration: Joi.number().required(),
-    year: Joi.string().required(),
-    description: Joi.string().required(),
+    year: Joi.string(),
+    description: Joi.string(),
     image: Joi.string().required().custom(validateURL),
     trailer: Joi.string().required().custom(validateURL),
     nameRU: Joi.string().required(),
-    nameEN: Joi.string().required(),
-    thumbnail: Joi.string().required().custom(validateURL),
+    nameEN: Joi.string(),
+    thumbnail: Joi.string().custom(validateURL),
     movieId: Joi.number().required(),
   }),
 }), createMovie);
